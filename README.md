@@ -1,6 +1,4 @@
-# charts
-
-https:&#x2F;&#x2F;medium.com&#x2F;flutter-io&#x2F;zero-to-one-with-flutter-43b13fd7b354
+https://www.udemy.com/learn-flutter-dart-to-build-ios-android-apps
 
 ## Getting Started
 
