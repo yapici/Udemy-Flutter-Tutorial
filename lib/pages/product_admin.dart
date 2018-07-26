@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../product_manager.dart';
-
-class HomePage extends StatelessWidget {
+class ProductAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('EasyList'),
+        title: Text('Manage Products'),
       ),
-      body: ProductManager(),
+      body: Center(
+        child: Text('Products'),
+      ),
     );
   }
 }

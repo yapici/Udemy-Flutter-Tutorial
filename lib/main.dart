@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart';
 
-import './pages/home.dart';
+import './pages/auth.dart';
 
 void main() {
 //  debugPaintBaselinesEnabled = true;
@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 //      debugShowMaterialGrid: true,
       theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-          brightness: Brightness.light,
-          accentColor: Colors.deepPurple),
-      home: HomePage(),
+        primarySwatch: Colors.deepOrange,
+        brightness: Brightness.light,
+      ),
+      home: AuthPage(),
     );
   }
 }
