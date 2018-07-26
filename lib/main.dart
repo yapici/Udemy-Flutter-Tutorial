@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 //import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
+import './pages/product_admin.dart';
+import './pages/products.dart';
 
 void main() {
 //  debugPaintBaselinesEnabled = true;
@@ -19,7 +21,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         brightness: Brightness.light,
       ),
-      home: AuthPage(),
+//      home: AuthPage(),
+      routes: {
+        '/': (BuildContext context) => ProductsPage(),
+        '/admin': (BuildContext context) => ProductAdmin()
+      },
     );
   }
 }
