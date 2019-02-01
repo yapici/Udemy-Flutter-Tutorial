@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Products extends StatelessWidget {
   final List<Map<String, dynamic>> products;
 
-  Products(this.products) {}
+  Products(this.products);
 
   Widget _buildProductItem(BuildContext context, int index) {
     return Card(
