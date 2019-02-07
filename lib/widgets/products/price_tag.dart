@@ -12,6 +12,6 @@ class PriceTag extends StatelessWidget {
         decoration: BoxDecoration(
             color: Theme.of(context).accentColor,
             borderRadius: BorderRadius.circular(5.0)),
-        child: Text('\$$price}', style: TextStyle(color: Colors.white)));
+        child: Text('\$$price', style: TextStyle(color: Colors.white)));
   }
 }
