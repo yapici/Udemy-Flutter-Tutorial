@@ -70,7 +70,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     final double targetPadding = deviceWidth - targetWidth;
 
     return Container(
-      width: targetWidth,
+        width: targetWidth,
         margin: EdgeInsets.all(10.0),
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: targetPadding / 2),
@@ -79,12 +79,17 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
             _buildDescriptionTextField(),
             _buildPriceTextField(),
             SizedBox(height: 10.0),
-            RaisedButton(
-              child: Text('Save'),
-              color: Theme.of(context).accentColor,
-              textColor: Colors.white,
-              onPressed: _submitForm,
-            )
+//            RaisedButton(
+//              child: Text('Save'),
+//              textColor: Colors.white,
+//              onPressed: _submitForm,
+//            )
+            GestureDetector(
+                onTap: _submitForm,
+                child: Container(
+                    color: Colors.green,
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('My Button')))
           ],
         ));
   }
