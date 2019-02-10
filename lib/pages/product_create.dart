@@ -20,6 +20,16 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   Widget _buildTitleTextField() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Title'),
+//      autovalidate: true,
+      validator: (String value) {
+//        if (value.trim().length <= 0) {
+//          return 'Title is required';
+//        }
+
+        if (value.isEmpty || value.length < 5) {
+          return 'Title is required and should be 5+ characters long';
+        }
+      },
       onSaved: (String value) {
         setState(() {
           _titleValue = value;
@@ -32,6 +42,11 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Description'),
       maxLines: 4,
+      validator: (String value) {
+        if (value.isEmpty || value.length < 10) {
+          return 'Description is required and should be 10+ characters long';
+        }
+      },
       onSaved: (String value) {
         setState(() {
           _descriptionValue = value;
@@ -44,6 +59,11 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Product Price'),
       keyboardType: TextInputType.number,
+      validator: (String value) {
+        if (value.isEmpty || !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
+          return 'Price is required and should be a number';
+        }
+      },
       onSaved: (String value) {
         setState(() {
           _priceValue = double.parse(value);
@@ -53,6 +73,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   }
 
   _submitForm() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
     _formKey.currentState.save();
     final Map<String, dynamic> product = {
       'title': _titleValue,
