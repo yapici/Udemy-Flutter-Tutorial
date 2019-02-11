@@ -93,28 +93,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
         ));
   }
 
-  _submitForm() {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
-
-    _formKey.currentState.save();
-
-    if (widget.product == null) {
-      widget.addProduct(_formData);
-    } else {
-      widget.updateProduct(widget.productIndex, _formData);
-    }
-
-    Navigator.pushReplacementNamed(context, "/products");
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-    final Widget pageContent = GestureDetector(
+
+    return GestureDetector(
         onTap: () {
           FocusScope.of(context)
               .requestFocus(FocusNode()); // Removing focus from inputs
@@ -144,6 +128,27 @@ class _ProductEditPageState extends State<ProductEditPage> {
 //                    child: Text('My Button')))
                   ],
                 ))));
+  }
+
+  _submitForm() {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    _formKey.currentState.save();
+
+    if (widget.product == null) {
+      widget.addProduct(_formData);
+    } else {
+      widget.updateProduct(widget.productIndex, _formData);
+    }
+
+    Navigator.pushReplacementNamed(context, "/products");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget pageContent = _buildPageContent(context);
 
     return widget.product == null
         ? pageContent
