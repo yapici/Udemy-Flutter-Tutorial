@@ -58,8 +58,8 @@ class ProductsModel extends Model {
         image: selectedProduct.image,
         isFavorite: newFavoriteStatus);
     _products[_selectedProductIndex] = updatedProduct;
-    _selectedProductIndex = null;
     notifyListeners(); // Needed to update the product (i.e., re-calls the ScopedModelDescendant 'builder' methods)
+    _selectedProductIndex = null;
   }
 
   void selectProduct(int index) {
