@@ -7,8 +7,7 @@ import './pages/auth.dart';
 import './pages/product_admin.dart';
 import './pages/products.dart';
 import './pages/product.dart';
-import './models/product.dart';
-import './scoped-models/products.dart';
+import './scoped-models/main.dart';
 
 void main() {
 //  debugPaintBaselinesEnabled = true;
@@ -28,8 +27,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-        model: ProductsModel(),
+    return ScopedModel<MainModel>(
+        model: MainModel(),
         child: MaterialApp(
 //      debugShowMaterialGrid: true,
           theme: ThemeData(
@@ -55,8 +54,7 @@ class _MyAppState extends State<MyApp> {
               final int index = int.parse(pathElements[2]);
 
               return MaterialPageRoute<bool>(
-                builder: (BuildContext context) =>
-                    ProductPage(index),
+                builder: (BuildContext context) => ProductPage(index),
               );
             }
 
