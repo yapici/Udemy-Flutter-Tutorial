@@ -1,51 +1,50 @@
-import 'package:scoped_model/scoped_model.dart';
-
 import '../models/product.dart';
+import './connected_products.dart';
 
-mixin ProductsModel on Model {
-  List<Product> _products = [];
-  int _selectedProductIndex;
+mixin ProductsModel on ConnectedProducts {
   bool _showFavorites = false;
 
-  List<Product> get products {
-    return List.from(_products); // Returning a copy, not a pointer
+  List<Product> get allProducts {
+    return List.from(products); // Returning a copy, not a pointer
   }
 
   List<Product> get displayedProducts {
     if (_showFavorites) {
-      return _products.where((Product product) => product.isFavorite).toList();
+      return products.where((Product product) => product.isFavorite).toList();
     }
-    return List.from(_products);
+    return List.from(products);
   }
 
   int get selectedProductIndex {
-    return _selectedProductIndex;
+    return selProductIndex;
   }
 
   Product get selectedProduct {
-    if (_selectedProductIndex == null) {
+    if (selectedProductIndex == null) {
       return null;
     }
-    return _products[_selectedProductIndex];
+    return products[selectedProductIndex];
   }
 
   bool get displayFavoritesOnly  {
     return _showFavorites;
   }
 
-  void addProduct(Product product) {
-    _products.add(product);
-    _selectedProductIndex = null;
-  }
-
-  void updateProduct(Product product) {
-    _products[_selectedProductIndex] = product;
-    _selectedProductIndex = null;
+  void updateProduct(String title, String description, String image, double price) {
+    final Product updatedProduct = Product(
+        title: title,
+        description: description,
+        price: price,
+        image: image,
+        userEmail: selectedProduct.userEmail,
+        userId: selectedProduct.userId);
+    products[selectedProductIndex] = updatedProduct;
+    selProductIndex = null;
   }
 
   void deleteProduct() {
-    _products.removeAt(_selectedProductIndex);
-    _selectedProductIndex = null;
+    products.removeAt(selectedProductIndex);
+    selProductIndex = null;
   }
 
   void toggleProductFavoriteStatus() {
@@ -56,14 +55,16 @@ mixin ProductsModel on Model {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        userEmail: selectedProduct.userEmail,
+        userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
-    _products[_selectedProductIndex] = updatedProduct;
+    products[selectedProductIndex] = updatedProduct;
     notifyListeners(); // Needed to update the product (i.e., re-calls the ScopedModelDescendant 'builder' methods)
-    _selectedProductIndex = null;
+    selProductIndex = null;
   }
 
   void selectProduct(int index) {
-    _selectedProductIndex = index;
+    selProductIndex = index;
     notifyListeners();
   }
 
