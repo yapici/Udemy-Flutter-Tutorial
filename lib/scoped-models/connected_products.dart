@@ -18,7 +18,9 @@ mixin ConnectedProductsModel on Model {
       'description': description,
       'image':
           'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
-      'price': price
+      'price': price,
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
 
     http
@@ -92,7 +94,27 @@ mixin ProductsModel on ConnectedProductsModel {
     http
         .get('https://flutter-products-12150.firebaseio.com/products.json')
         .then((http.Response response) {
-          print(json.decode(response.body));
+      final List<Product> fetchedProductList = [];
+
+      final Map<String, dynamic> productListData =
+          json.decode(response.body);
+
+      productListData
+          .forEach((String productId, dynamic productData) {
+        final Product product = Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            image: productData['image'],
+            price: productData['price'],
+            userEmail: productData['userEmail'],
+            userId: productData['userId'].toString());
+
+        fetchedProductList.add(product);
+      });
+
+      _products = fetchedProductList;
+      notifyListeners();
     });
   }
 
