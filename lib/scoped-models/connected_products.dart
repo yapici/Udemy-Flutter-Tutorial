@@ -171,6 +171,7 @@ mixin ProductsModel on ConnectedProductsModel {
       _products = fetchedProductList;
       _isLoading = false;
       notifyListeners();
+      _selectedProductId = null;
     });
   }
 
