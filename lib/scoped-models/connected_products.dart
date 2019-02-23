@@ -10,7 +10,7 @@ import '../models/user.dart';
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
   User _authenticatedUser;
-  int _selectedProductIndex;
+  String _selectedProductId;
   bool _isLoading = false;
 
   Future<Null> addProduct(
@@ -65,14 +65,22 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   int get selectedProductIndex {
-    return _selectedProductIndex;
+    return _products.indexWhere((Product product) {
+      return product.id == _selectedProductId;
+    });
+  }
+
+  String get selectedProductId {
+    return _selectedProductId;
   }
 
   Product get selectedProduct {
-    if (selectedProductIndex == null) {
+    if (_selectedProductId == null) {
       return null;
     }
-    return _products[selectedProductIndex];
+    return _products.firstWhere((Product product) {
+      return product.id == _selectedProductId;
+    });
   }
 
   bool get displayFavoritesOnly {
@@ -108,6 +116,7 @@ mixin ProductsModel on ConnectedProductsModel {
           image: image,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
+      
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     });
@@ -117,10 +126,13 @@ mixin ProductsModel on ConnectedProductsModel {
     final productId = selectedProduct.id;
     _isLoading = true;
     _products.removeAt(selectedProductIndex);
-    _selectedProductIndex = null;
+    _selectedProductId = null;
     notifyListeners();
 
-    http.delete('https://flutter-products-12150.firebaseio.com/products/${productId}.json').then((http.Response response) {
+    http
+        .delete(
+            'https://flutter-products-12150.firebaseio.com/products/${productId}.json')
+        .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
     });
@@ -166,6 +178,7 @@ mixin ProductsModel on ConnectedProductsModel {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updatedProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
@@ -177,9 +190,9 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners(); // Needed to update the product (i.e., re-calls the ScopedModelDescendant 'builder' methods)
   }
 
-  void selectProduct(int index) {
-    _selectedProductIndex = index;
-    if (index != null) notifyListeners();
+  void selectProduct(String productId) {
+    _selectedProductId = productId;
+    notifyListeners();
   }
 
   void toggleDisplayMode() {
