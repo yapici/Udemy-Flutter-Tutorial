@@ -12,6 +12,44 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   String _selectedProductId;
   bool _isLoading = false;
+}
+
+mixin ProductsModel on ConnectedProductsModel {
+  bool _showFavorites = false;
+
+  List<Product> get allProducts {
+    return List.from(_products); // Returning a copy, not a pointer
+  }
+
+  List<Product> get displayedProducts {
+    if (_showFavorites) {
+      return _products.where((Product product) => product.isFavorite).toList();
+    }
+    return List.from(_products);
+  }
+
+  int get selectedProductIndex {
+    return _products.indexWhere((Product product) {
+      return product.id == _selectedProductId;
+    });
+  }
+
+  String get selectedProductId {
+    return _selectedProductId;
+  }
+
+  Product get selectedProduct {
+    if (_selectedProductId == null) {
+      return null;
+    }
+    return _products.firstWhere((Product product) {
+      return product.id == _selectedProductId;
+    });
+  }
+
+  bool get displayFavoritesOnly {
+    return _showFavorites;
+  }
 
   Future<bool> addProduct(
       String title, String description, String image, double price) async {
@@ -59,44 +97,6 @@ mixin ConnectedProductsModel on Model {
       notifyListeners();
       return false;
     }
-  }
-}
-
-mixin ProductsModel on ConnectedProductsModel {
-  bool _showFavorites = false;
-
-  List<Product> get allProducts {
-    return List.from(_products); // Returning a copy, not a pointer
-  }
-
-  List<Product> get displayedProducts {
-    if (_showFavorites) {
-      return _products.where((Product product) => product.isFavorite).toList();
-    }
-    return List.from(_products);
-  }
-
-  int get selectedProductIndex {
-    return _products.indexWhere((Product product) {
-      return product.id == _selectedProductId;
-    });
-  }
-
-  String get selectedProductId {
-    return _selectedProductId;
-  }
-
-  Product get selectedProduct {
-    if (_selectedProductId == null) {
-      return null;
-    }
-    return _products.firstWhere((Product product) {
-      return product.id == _selectedProductId;
-    });
-  }
-
-  bool get displayFavoritesOnly {
-    return _showFavorites;
   }
 
   Future<bool> updateProduct(
