@@ -47,17 +47,18 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
         model: _model,
         child: MaterialApp(
-//      debugShowMaterialGrid: true,
+          // debugShowMaterialGrid: true,
           theme: ThemeData(
               primarySwatch: Colors.deepOrange,
               brightness: Brightness.light,
               accentColor: Colors.deepPurple,
               buttonColor: Colors.deepPurple),
-//      home: AuthPage(),
+          // home: AuthPage(),
           routes: {
             '/': (BuildContext context) =>
                 !_isAuthenticated ? AuthPage() : ProductsPage(_model),
-            '/admin': (BuildContext context) => !_isAuthenticated ? AuthPage() :ProductAdmin(_model)
+            '/admin': (BuildContext context) =>
+                !_isAuthenticated ? AuthPage() : ProductAdmin(_model)
           },
           onGenerateRoute: (RouteSettings settings) {
             if (!_isAuthenticated) {
@@ -80,7 +81,8 @@ class _MyAppState extends State<MyApp> {
               });
 
               return MaterialPageRoute<bool>(
-                builder: (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductPage(product),
+                builder: (BuildContext context) =>
+                    !_isAuthenticated ? AuthPage() : ProductPage(product),
               );
             }
 
@@ -88,7 +90,8 @@ class _MyAppState extends State<MyApp> {
           },
           onUnknownRoute: (RouteSettings settings) {
             return MaterialPageRoute(
-                builder: (BuildContext context) => !_isAuthenticated ? AuthPage() : ProductsPage(_model));
+                builder: (BuildContext context) =>
+                    !_isAuthenticated ? AuthPage() : ProductsPage(_model));
           },
         ));
   }

@@ -189,7 +189,11 @@ mixin ProductsModel on ConnectedProductsModel {
             image: productData['image'],
             price: productData['price'],
             userEmail: productData['userEmail'],
-            userId: productData['userId'].toString());
+            userId: productData['userId'].toString(),
+            isFavorite: productData['wishlistUsers'] == null
+                ? false
+                : (productData['wishlistUsers'] as Map<String, dynamic>)
+                    .containsKey(_authenticatedUser.id));
 
         fetchedProductList.add(product);
       });
@@ -205,9 +209,10 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  void toggleProductFavoriteStatus() {
+  void toggleProductFavoriteStatus() async {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
+
     final Product updatedProduct = Product(
         id: selectedProduct.id,
         title: selectedProduct.title,
@@ -217,8 +222,32 @@ mixin ProductsModel on ConnectedProductsModel {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
+
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners(); // Needed to update the product (i.e., re-calls the ScopedModelDescendant 'builder' methods)
+
+    http.Response response;
+    final String url =
+        'https://flutter-products-12150.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}';
+
+    response = newFavoriteStatus
+        ? await http.put(url, body: json.encode(true))
+        : await http.delete(url);
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      final Product updatedProduct = Product(
+          id: selectedProduct.id,
+          title: selectedProduct.title,
+          description: selectedProduct.description,
+          price: selectedProduct.price,
+          image: selectedProduct.image,
+          userEmail: selectedProduct.userEmail,
+          userId: selectedProduct.userId,
+          isFavorite: !newFavoriteStatus);
+
+      _products[selectedProductIndex] = updatedProduct;
+      notifyListeners(); // Needed to update the product (i.e., re-calls the ScopedModelDescendant 'builder' methods)
+    }
   }
 
   void selectProduct(String productId) {
@@ -343,7 +372,7 @@ mixin UserModel on ConnectedProductsModel {
     prefs.remove('token');
     prefs.remove('userEmail');
     prefs.remove('userId');
-   }
+  }
 
   void setAuthTimeout(int time) {
     _authTimer = Timer(Duration(seconds: time), () {
