@@ -1,5 +1,5 @@
-name: charts
-description: https:&#x2F;&#x2F;medium.com&#x2F;flutter-io&#x2F;zero-to-one-with-flutter-43b13fd7b354
+name: products
+description: flutter-example-app
 
 dependencies:
   flutter:
@@ -14,6 +14,11 @@ dependencies:
   http: ^0.12.0+1
   shared_preferences: ^0.5.1+1
   rxdart: ^0.21.0
+
+  map_view: ^0.0.14
+  # map_view:
+  #   git:
+  #     url: git://github.com/Eimji/flutter_google_map_view.git
 
 dev_dependencies:
   flutter_test:
