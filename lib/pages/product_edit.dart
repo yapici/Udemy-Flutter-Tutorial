@@ -6,6 +6,7 @@ import '../widgets/helpers/ensure_visible.dart';
 import '../widgets/form_inputs/location.dart';
 import '../models/product.dart';
 import '../scoped-models/main.dart';
+import '../models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -19,7 +20,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpeg'
+    'image': 'assets/food.jpeg',
+    'location': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
@@ -127,7 +129,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     _buildDescriptionTextField(product),
                     _buildPriceTextField(product),
                     SizedBox(height: 10.0),
-                    LocationInput(),
+                    LocationInput(_setLocation),
                     SizedBox(height: 10.0),
                     _buildSubmitButton()
 //            GestureDetector(
@@ -140,7 +142,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 ))));
   }
 
-  _submitForm(Function addProduct, Function updateProduct,
+  void _setLocation(LocationData locationData) {
+    _formData['location'] = locationData;
+  }
+
+  void _submitForm(Function addProduct, Function updateProduct,
       int selectedProductIndex, Function setSelectedProduct) {
     if (!_formKey.currentState.validate()) {
       return;
@@ -150,7 +156,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
     if (selectedProductIndex == -1) {
       addProduct(_formData['title'], _formData['description'],
-              _formData['image'], _formData['price'])
+              _formData['image'], _formData['price'], _formData['location'])
           .then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, "/products")

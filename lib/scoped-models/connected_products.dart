@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
+import '../models/location_data.dart';
 import 'package:rxdart/subjects.dart';
 
 mixin ConnectedProductsModel on Model {
@@ -54,8 +55,8 @@ mixin ProductsModel on ConnectedProductsModel {
     return _showFavorites;
   }
 
-  Future<bool> addProduct(
-      String title, String description, String image, double price) async {
+  Future<bool> addProduct(String title, String description, String image,
+      double price, LocationData locationData) async {
     _isLoading = true;
     notifyListeners();
 
@@ -66,7 +67,10 @@ mixin ProductsModel on ConnectedProductsModel {
           'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
       'price': price,
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'loc_lat': locationData.latitude,
+      'loc_lng': locationData.longitude,
+      'loc_address': locationData.address
     };
 
     try {
