@@ -6,11 +6,13 @@ import 'package:http/http.dart' as http;
 
 import '../helpers/ensure_visible.dart';
 import '../../models/location_data.dart';
+import '../../models/product.dart';
 
 class LocationInput extends StatefulWidget {
   final Function setLocation;
+  final Product product;
 
-  LocationInput(this.setLocation);
+  LocationInput(this.setLocation, this.product);
 
   @override
   State<StatefulWidget> createState() {
@@ -27,7 +29,11 @@ class _LocationInputState extends State<LocationInput> {
   @override
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
-    getInitialStaticMap();
+    if (widget.product != null) {
+      getStaticMap(widget.product.location.address);
+    } else {
+      getStaticMap("New York");
+    }
     super.initState();
   }
 
@@ -37,23 +43,8 @@ class _LocationInputState extends State<LocationInput> {
     super.dispose();
   }
 
-  void getInitialStaticMap() {
-    final StaticMapProvider staticMapViewProvider = StaticMapProvider('');
-
-    final Uri staticMapUri = staticMapViewProvider.getStaticUriWithMarkers(
-        [Marker('position', 'Position', 45.52638, -122.6754)],
-        center: Location(45.52638, -122.6754),
-        width: 500,
-        height: 300,
-        maptype: StaticMapViewType.roadmap);
-
-    setState(() {
-      _staticMapUri = staticMapUri;
-    });
-  }
-
   void getStaticMap(String address) async {
-    if (address.isEmpty) {
+    if (address == null || address.isEmpty) {
       setState(() {
         _staticMapUri = null;
       });
@@ -66,6 +57,7 @@ class _LocationInputState extends State<LocationInput> {
 
     final http.Response response = await http.get(uri);
     final decodedResponse = json.decode(response.body);
+
     final formattedAddrss = decodedResponse['results'][0]['formatted_address'];
     final coordinates = decodedResponse['results'][0]['geometry']['location'];
     _locationData = LocationData(
@@ -116,7 +108,10 @@ class _LocationInputState extends State<LocationInput> {
         SizedBox(
           height: 10.0,
         ),
-        Image.network(_staticMapUri.toString())
+        FadeInImage.assetNetwork(
+          placeholder: 'assets/food.jpeg',
+          image: _staticMapUri.toString(),
+        )
       ],
     );
   }

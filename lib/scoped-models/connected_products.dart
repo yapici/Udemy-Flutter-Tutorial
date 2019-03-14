@@ -75,8 +75,11 @@ mixin ProductsModel on ConnectedProductsModel {
 
     try {
       final http.Response response = await http.post(
-          'https://flutter-products-12150.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
+          'https://flutter-demo-3c8a7.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productData));
+
+      print(_authenticatedUser.token);
+      print(json.decode(response.body));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
@@ -93,7 +96,8 @@ mixin ProductsModel on ConnectedProductsModel {
           price: price,
           image: image,
           userEmail: _authenticatedUser.email,
-          userId: _authenticatedUser.id);
+          userId: _authenticatedUser.id,
+          location: locationData);
 
       _products.add(newProduct);
       _isLoading = false;
@@ -123,7 +127,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     return http
         .put(
-            'https://flutter-products-12150.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+            'https://flutter-demo-3c8a7.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: json.encode(updateData))
         .then((http.Response response) {
       _isLoading = false;
@@ -155,7 +159,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     return http
         .delete(
-            'https://flutter-products-12150.firebaseio.com/products/${productId}.json?auth=${_authenticatedUser.token}')
+            'https://flutter-demo-3c8a7.firebaseio.com/products/${productId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -173,11 +177,12 @@ mixin ProductsModel on ConnectedProductsModel {
 
     return http
         .get(
-            'https://flutter-products-12150.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
+            'https://flutter-demo-3c8a7.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
 
       final Map<String, dynamic> productListData = json.decode(response.body);
+      print("productListData: ${productListData}");
 
       if (productListData == null) {
         _isLoading = false;
@@ -186,6 +191,7 @@ mixin ProductsModel on ConnectedProductsModel {
       }
 
       productListData.forEach((String productId, dynamic productData) {
+        print("productData['address']: ${productData['address']}");
         final Product product = Product(
             id: productId,
             title: productData['title'],
@@ -194,6 +200,10 @@ mixin ProductsModel on ConnectedProductsModel {
             price: productData['price'],
             userEmail: productData['userEmail'],
             userId: productData['userId'].toString(),
+            location: LocationData(
+                address: productData['loc_address'],
+                latitude: productData['loc_lat'],
+                longitude: productData['loc_lng']),
             isFavorite: productData['wishlistUsers'] == null
                 ? false
                 : (productData['wishlistUsers'] as Map<String, dynamic>)
@@ -237,7 +247,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     http.Response response;
     final String url =
-        'https://flutter-products-12150.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}';
+        'https://flutter-demo-3c8a7.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}';
 
     response = newFavoriteStatus
         ? await http.put(url, body: json.encode(true))
@@ -299,10 +309,10 @@ mixin UserModel on ConnectedProductsModel {
 
     if (mode == AuthMode.Login) {
       authUrl =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDo0eZeCdNLqu-rT9G-T2v39FIjdkFaWxw';
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=';
     } else {
       authUrl =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDo0eZeCdNLqu-rT9G-T2v39FIjdkFaWxw';
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=';
     }
 
     final http.Response response = await http.post(authUrl,
