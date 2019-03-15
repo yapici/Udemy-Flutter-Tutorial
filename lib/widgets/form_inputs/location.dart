@@ -30,9 +30,7 @@ class _LocationInputState extends State<LocationInput> {
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
     if (widget.product != null) {
-      getStaticMap(widget.product.location.address);
-    } else {
-      getStaticMap("New York");
+      getStaticMap(widget.product.location.address, false);
     }
     super.initState();
   }
@@ -43,7 +41,7 @@ class _LocationInputState extends State<LocationInput> {
     super.dispose();
   }
 
-  void getStaticMap(String address) async {
+  void getStaticMap(String address, [geocode = true]) async {
     if (address == null || address.isEmpty) {
       setState(() {
         _staticMapUri = null;
@@ -55,15 +53,19 @@ class _LocationInputState extends State<LocationInput> {
     final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json',
         {'address': address, 'key': ''});
 
-    final http.Response response = await http.get(uri);
-    final decodedResponse = json.decode(response.body);
+      final http.Response response = await http.get(uri);
+      final decodedResponse = json.decode(response.body);
+      final formattedAddrss =
+          decodedResponse['results'][0]['formatted_address'];
+      final coordinates = decodedResponse['results'][0]['geometry']['location'];
 
-    final formattedAddrss = decodedResponse['results'][0]['formatted_address'];
-    final coordinates = decodedResponse['results'][0]['geometry']['location'];
-    _locationData = LocationData(
-        latitude: coordinates['lat'],
-        longitude: coordinates['lng'],
-        address: formattedAddrss);
+      _locationData = LocationData(
+          latitude: coordinates['lat'],
+          longitude: coordinates['lng'],
+          address: formattedAddrss);
+    } else {
+      _locationData = widget.product.location;
+    }
 
     final StaticMapProvider staticMapViewProvider = StaticMapProvider('');
 
@@ -108,10 +110,13 @@ class _LocationInputState extends State<LocationInput> {
         SizedBox(
           height: 10.0,
         ),
-        FadeInImage.assetNetwork(
-          placeholder: 'assets/food.jpeg',
-          image: _staticMapUri.toString(),
-        )
+        _staticMapUri == null
+            ? Container()
+            : Image.network(_staticMapUri.toString())
+        // FadeInImage.assetNetwork(
+        //   placeholder: 'assets/food.jpeg',
+        //   image: _staticMapUri.toString(),
+        // )
       ],
     );
   }

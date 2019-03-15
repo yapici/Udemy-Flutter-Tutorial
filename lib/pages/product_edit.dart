@@ -178,7 +178,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       });
     } else {
       updateProduct(_formData['title'], _formData['description'],
-              _formData['image'], _formData['price'])
+              _formData['image'], _formData['price'], _formData['location'])
           .then((_) => Navigator.pushReplacementNamed(context, "/products")
               .then((_) => setSelectedProduct(null)));
     }

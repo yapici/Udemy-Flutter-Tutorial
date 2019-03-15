@@ -110,8 +110,8 @@ mixin ProductsModel on ConnectedProductsModel {
     }
   }
 
-  Future<bool> updateProduct(
-      String title, String description, String image, double price) {
+  Future<bool> updateProduct(String title, String description, String image,
+      double price, LocationData locationData) {
     _isLoading = true;
     notifyListeners();
 
@@ -121,6 +121,9 @@ mixin ProductsModel on ConnectedProductsModel {
       'image':
           'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
       'price': price,
+      'loc_lat': locationData.latitude,
+      'loc_lng': locationData.longitude,
+      'loc_address': locationData.address,
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId
     };
@@ -137,6 +140,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           price: price,
           image: image,
+          location: locationData,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
 
@@ -191,7 +195,6 @@ mixin ProductsModel on ConnectedProductsModel {
       }
 
       productListData.forEach((String productId, dynamic productData) {
-        print("productData['address']: ${productData['address']}");
         final Product product = Product(
             id: productId,
             title: productData['title'],
@@ -238,6 +241,7 @@ mixin ProductsModel on ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
@@ -260,6 +264,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
           isFavorite: !newFavoriteStatus);
