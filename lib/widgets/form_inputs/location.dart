@@ -84,10 +84,13 @@ class _LocationInputState extends State<LocationInput> {
         height: 300,
         maptype: StaticMapViewType.roadmap);
     widget.setLocation(_locationData);
-    setState(() {
-      _addressInputController.text = _locationData.address;
-      _staticMapUri = staticMapUri;
-    });
+
+    if (mounted) {
+      setState(() {
+        _addressInputController.text = _locationData.address;
+        _staticMapUri = staticMapUri;
+      });
+    }
   }
 
   Future<String> _getAddress(double lat, double lng) async {
