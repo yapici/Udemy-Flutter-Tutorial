@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -21,7 +22,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpeg',
+    'image': null,
     'location': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -132,7 +133,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                     SizedBox(height: 10.0),
                     LocationInput(_setLocation, product),
                     SizedBox(height: 10.0),
-                    ImageInput(),
+                    ImageInput(_setImage, product),
                     SizedBox(height: 10.0),
                     _buildSubmitButton()
 //            GestureDetector(
@@ -149,9 +150,14 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formData['location'] = locationData;
   }
 
+  void _setImage(File image) {
+    _formData['image'] = image;
+  }
+
   void _submitForm(Function addProduct, Function updateProduct,
       int selectedProductIndex, Function setSelectedProduct) {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() ||
+        (_formData['image'] == null && selectedProductIndex == -1)) {
       return;
     }
 
