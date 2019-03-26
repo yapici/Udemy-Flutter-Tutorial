@@ -30,13 +30,30 @@ class _ProductEditPageState extends State<ProductEditPage> {
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
 
+  final TextEditingController _titleTextController = TextEditingController();
+  final TextEditingController _descriptionTextController =
+      TextEditingController();
+  final TextEditingController _priceTextController = TextEditingController();
+
   Widget _buildTitleTextField(Product product) {
+    if (product == null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = '';
+    } else if (product != null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = product.title;
+    } else if (product != null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else {
+      _titleTextController.text = '';
+    }
+
     return EnsureVisibleWhenFocused(
         focusNode: _titleFocusNode,
         child: TextFormField(
           focusNode: _titleFocusNode,
           decoration: InputDecoration(labelText: 'Product Title'),
-          initialValue: product == null ? '' : product.title,
+          controller: _titleTextController,
 //      autovalidate: true,
           validator: (String value) {
 //        if (value.trim().length <= 0) {
@@ -54,13 +71,20 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if (product == null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = '';
+    } else if (product != null &&
+        _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = product.description;
+    }
+
     return EnsureVisibleWhenFocused(
         focusNode: _descriptionFocusNode,
         child: TextFormField(
           focusNode: _descriptionFocusNode,
           decoration: InputDecoration(labelText: 'Product Description'),
           maxLines: 4,
-          initialValue: product == null ? '' : product.description,
+          controller: _descriptionTextController,
           validator: (String value) {
             if (value.isEmpty || value.length < 10) {
               return 'Description is required and should be 10+ characters long';
@@ -73,13 +97,19 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildPriceTextField(Product product) {
+    if (product == null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = '';
+    } else if (product != null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = product.price.toString();
+    }
+
     return EnsureVisibleWhenFocused(
         focusNode: _priceFocusNode,
         child: TextFormField(
           focusNode: _priceFocusNode,
           decoration: InputDecoration(labelText: 'Product Price'),
           keyboardType: TextInputType.number,
-          initialValue: product == null ? '' : product.price.toString(),
+          controller: _priceTextController,
           validator: (String value) {
             if (value.isEmpty ||
                 !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {

@@ -146,6 +146,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           price: price,
           image: uploadData['imageUrl'],
+          imagePath: uploadData['imagePath'],
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id,
           location: locationData);
@@ -172,6 +173,7 @@ mixin ProductsModel on ConnectedProductsModel {
       'image':
           'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
       'price': price,
+      'imagePath': selectedProduct.imagePath,
       'loc_lat': locationData.latitude,
       'loc_lng': locationData.longitude,
       'loc_address': locationData.address,
@@ -191,6 +193,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: description,
           price: price,
           image: image,
+          imagePath: selectedProduct.imagePath,
           location: locationData,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
@@ -250,6 +253,7 @@ mixin ProductsModel on ConnectedProductsModel {
             title: productData['title'],
             description: productData['description'],
             image: productData['image'],
+            imagePath: productData['imagePath'],
             price: productData['price'],
             userEmail: productData['userEmail'],
             userId: productData['userId'].toString(),
@@ -291,6 +295,7 @@ mixin ProductsModel on ConnectedProductsModel {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        imagePath: selectedProduct.imagePath,
         location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
@@ -314,6 +319,7 @@ mixin ProductsModel on ConnectedProductsModel {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          imagePath: selectedProduct.imagePath,
           location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,

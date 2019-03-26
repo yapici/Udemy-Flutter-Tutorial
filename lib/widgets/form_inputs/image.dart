@@ -87,7 +87,7 @@ class _ImageInputState extends State<ImageInput> {
           )),
       SizedBox(height: 10.0),
       _imageFile == null
-          ? Text('Please pick and image')
+          ? Text('Please pick an image')
           : Image.file(_imageFile,
               fit: BoxFit.cover,
               height: 300.0,
