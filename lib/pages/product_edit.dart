@@ -194,8 +194,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formKey.currentState.save();
 
     if (selectedProductIndex == -1) {
-      addProduct(_formData['title'], _formData['description'],
-              _formData['image'], _formData['price'], _formData['location'])
+      addProduct(
+              _titleTextController.text,
+              _descriptionTextController.text,
+              _formData['image'],
+              double.parse(_priceTextController.text),
+              _formData['location'])
           .then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, "/products")
