@@ -112,8 +112,6 @@ mixin ProductsModel on ConnectedProductsModel {
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
-      'image':
-          'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
       'price': price,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
@@ -162,18 +160,31 @@ mixin ProductsModel on ConnectedProductsModel {
     }
   }
 
-  Future<bool> updateProduct(String title, String description, String image,
-      double price, LocationData locationData) {
+  Future<bool> updateProduct(String title, String description, File image,
+      double price, LocationData locationData) async {
     _isLoading = true;
     notifyListeners();
+    String imageUrl = selectedProduct.image;
+    String imagePath = selectedProduct.imagePath;
+
+    if (image != null) {
+      final uploadData = await uploadImage(image);
+
+      if (uploadData == null) {
+        print('File upload failed');
+        return false;
+      }
+
+      imageUrl = uploadData['imageUrl'];
+      imagePath = uploadData['imagePath'];
+    }
 
     final Map<String, dynamic> updateData = {
       'title': title,
       'description': description,
-      'image':
-          'https://preppykitchen.com/wp-content/uploads/2016/08/Funfetti-original-redo-close.jpg',
+      'imageUrl': imageUrl,
+      'imagePath': imagePath,
       'price': price,
-      'imagePath': selectedProduct.imagePath,
       'loc_lat': locationData.latitude,
       'loc_lng': locationData.longitude,
       'loc_address': locationData.address,
@@ -181,19 +192,19 @@ mixin ProductsModel on ConnectedProductsModel {
       'userId': selectedProduct.userId
     };
 
-    return http
-        .put(
-            'https://flutter-demo-3c8a7.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
-            body: json.encode(updateData))
-        .then((http.Response response) {
+    try {
+      final http.Response response = await http.put(
+          'https://flutter-demo-3c8a7.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+          body: json.encode(updateData));
+
       _isLoading = false;
       final Product updatedProduct = Product(
           id: selectedProduct.id,
           title: title,
           description: description,
           price: price,
-          image: image,
-          imagePath: selectedProduct.imagePath,
+          image: imageUrl,
+          imagePath: imagePath,
           location: locationData,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
@@ -201,11 +212,12 @@ mixin ProductsModel on ConnectedProductsModel {
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
       return true;
-    }).catchError((error) {
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
-    });
+    }
+    ;
   }
 
   Future<bool> deleteProduct() {
@@ -252,7 +264,7 @@ mixin ProductsModel on ConnectedProductsModel {
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            image: productData['image'],
+            image: productData['imageUrl'],
             imagePath: productData['imagePath'],
             price: productData['price'],
             userEmail: productData['userEmail'],
