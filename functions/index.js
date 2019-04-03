@@ -101,3 +101,13 @@ exports.storeImage = functions.https.onRequest((req, res) => {
         return busboy.end(req.rawBody);
     });
 });
+
+exports.deleteImage = functions.database
+    .ref('/products/{productId}')
+    .onDelete(snapshot => {
+        const imageData = snapshot.val();
+        const imagePath = imageData.imagePath;
+
+        const bucket = gcs.bucket('flutter-demo-3c8a7.appspot.com');
+        return bucket.file(imagePath).delete();
+    });
