@@ -68,7 +68,6 @@ class ProductCard extends StatelessWidget {
           ),
           _buildTitlePriceRow(),
           AddressTag(product.location.address),
-          Text(product.userEmail),
           _buildActionButtons(context)
         ],
       ),

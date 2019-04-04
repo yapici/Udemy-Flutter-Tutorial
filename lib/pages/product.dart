@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:map_view/map_view.dart';
 
 import '../widgets/ui_elements/title_default.dart';
+import '../widgets/products/product_fab.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
@@ -99,6 +100,7 @@ class ProductPage extends StatelessWidget {
               )
             ],
           ),
+          floatingActionButton: ProductFAB(),
         ));
   }
 }
