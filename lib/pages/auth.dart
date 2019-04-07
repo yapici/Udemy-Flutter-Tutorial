@@ -22,10 +22,14 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   final TextEditingController _passwordTextController = TextEditingController();
   AuthMode _authMode = AuthMode.Login;
   AnimationController _controller;
+  Animation<Offset> _slideAnimation;
 
   void initState() {
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _slideAnimation = Tween<Offset>(begin: Offset(0.0, -2.0), end: Offset.zero)
+        .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
     super.initState();
   }
 
@@ -76,19 +80,21 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   Widget _buildPasswordConfirmTextField() {
     return FadeTransition(
         opacity: CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-        child: TextFormField(
-            decoration: InputDecoration(
-                labelText: 'Confirm Passowrd',
-                filled: true,
-                fillColor: Colors.white),
-            obscureText: true,
-            keyboardType: TextInputType.emailAddress,
-            validator: (String value) {
-              if (_passwordTextController.text != value &&
-                  _authMode == AuthMode.Signup) {
-                return 'Passwords do not match';
-              }
-            }));
+        child: SlideTransition(
+            position: _slideAnimation,
+            child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Confirm Passowrd',
+                    filled: true,
+                    fillColor: Colors.white),
+                obscureText: true,
+                keyboardType: TextInputType.emailAddress,
+                validator: (String value) {
+                  if (_passwordTextController.text != value &&
+                      _authMode == AuthMode.Signup) {
+                    return 'Passwords do not match';
+                  }
+                })));
   }
 
   Widget _buildAcceptSwitch() {
