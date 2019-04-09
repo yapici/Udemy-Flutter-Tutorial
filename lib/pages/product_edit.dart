@@ -106,20 +106,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return EnsureVisibleWhenFocused(
         focusNode: _priceFocusNode,
         child: TextFormField(
-          focusNode: _priceFocusNode,
-          decoration: InputDecoration(labelText: 'Product Price'),
-          keyboardType: TextInputType.number,
-          controller: _priceTextController,
-          validator: (String value) {
-            if (value.isEmpty ||
-                !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value)) {
-              return 'Price is required and should be a number';
-            }
-          },
-          onSaved: (String value) {
-            _formData['price'] = double.parse(value);
-          },
-        ));
+            focusNode: _priceFocusNode,
+            decoration: InputDecoration(labelText: 'Product Price'),
+            keyboardType: TextInputType.number,
+            controller: _priceTextController,
+            validator: (String value) {
+              if (value.isEmpty ||
+                  !RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
+                return 'Price is required and should be a number';
+              }
+            }));
   }
 
   Widget _buildSubmitButton() {
@@ -198,7 +194,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
               _titleTextController.text,
               _descriptionTextController.text,
               _formData['image'],
-              double.parse(_priceTextController.text),
+              double.parse(
+                  _priceTextController.text.replaceFirst(RegExp(r','), '.')),
               _formData['location'])
           .then((bool success) {
         if (success) {
@@ -220,8 +217,13 @@ class _ProductEditPageState extends State<ProductEditPage> {
         }
       });
     } else {
-      updateProduct(_formData['title'], _formData['description'],
-              _formData['image'], _formData['price'], _formData['location'])
+      updateProduct(
+              _titleTextController.text,
+              _descriptionTextController.text,
+              _formData['image'],
+              double.parse(
+                  _priceTextController.text.replaceFirst(RegExp(r','), '.')),
+              _formData['location'])
           .then((_) => Navigator.pushReplacementNamed(context, "/products")
               .then((_) => setSelectedProduct(null)));
     }

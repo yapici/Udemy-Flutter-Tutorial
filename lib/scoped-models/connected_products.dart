@@ -14,6 +14,8 @@ import '../models/auth.dart';
 import '../models/location_data.dart';
 import 'package:rxdart/subjects.dart';
 
+import '../shared/global_config.dart';
+
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
   User _authenticatedUser;
@@ -93,7 +95,7 @@ mixin ProductsModel on ConnectedProductsModel {
       final responseData = json.decode(response.body);
       return responseData;
     } catch (error) {
-      print('File upload error: ${error}');
+      print('File upload error: $error');
       return null;
     }
   }
@@ -193,7 +195,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
 
     try {
-      final http.Response response = await http.put(
+      await http.put(
           'https://flutter-demo-3c8a7.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           body: json.encode(updateData));
 
@@ -217,7 +219,6 @@ mixin ProductsModel on ConnectedProductsModel {
       notifyListeners();
       return false;
     }
-    ;
   }
 
   Future<bool> deleteProduct() {
@@ -229,7 +230,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     return http
         .delete(
-            'https://flutter-demo-3c8a7.firebaseio.com/products/${productId}.json?auth=${_authenticatedUser.token}')
+            'https://flutter-demo-3c8a7.firebaseio.com/products/$productId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -241,8 +242,11 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<Null> fetchProducts({onlyForUser = false}) {
+  Future<Null> fetchProducts({onlyForUser = false, clearExisting = false}) {
     _isLoading = true;
+    if (clearExisting) {
+      _products = [];
+    }
     notifyListeners();
 
     return http
@@ -382,10 +386,10 @@ mixin UserModel on ConnectedProductsModel {
 
     if (mode == AuthMode.Login) {
       authUrl =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=';
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=$googleApiKey';
     } else {
       authUrl =
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=';
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=$googleApiKey';
     }
 
     final http.Response response = await http.post(authUrl,
@@ -462,6 +466,7 @@ mixin UserModel on ConnectedProductsModel {
     _authenticatedUser = null;
     _authTimer.cancel();
     _userSubject.add(false);
+    _selectedProductId = null;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('userEmail');
